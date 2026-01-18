@@ -48,12 +48,16 @@ onAuthStateChanged(auth, (user) => {
 });
 
 loginBtn.addEventListener('click', () => {
-    signInWithPopup(auth, provider).catch(err => console.error("Erreur Login:", err));
+    alert("Le bouton fonctionne, lancement de Google...");
+    signInWithPopup(auth, provider)
+        .then(() => alert("Succès !"))
+        .catch(err => alert("Erreur Firebase : " + err.message));
 });
 
 logoutBtn.addEventListener('click', () => {
     signOut(auth).catch(err => console.error("Erreur Logout:", err));
 });
+
 
 // --- GESTION DES MESSAGES ---
 
