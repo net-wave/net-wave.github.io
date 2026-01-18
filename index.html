@@ -1,34 +1,16 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Wave Chat - Email Login</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="auth-container">
-        <div id="login-form">
-            <h3>Connexion / Inscription</h3>
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Mot de passe">
+<div id="auth-container">
+    <div id="login-form">
+        <h3>Wave Chat</h3>
+        <input type="text" id="username" placeholder="Ton pseudo (ex: Jean83)">
+        <input type="password" id="password" placeholder="Mot de passe (6 car. min)">
+        <div class="btns">
             <button id="btn-login">Se connecter</button>
-            <button id="btn-signup">S'inscrire</button>
-        </div>
-        
-        <div id="user-info" style="display: none;">
-            <span id="display-email"></span>
-            <button id="btn-logout">Déconnexion</button>
+            <button id="btn-signup">Créer un compte</button>
         </div>
     </div>
-
-    <div id="chat-app" style="display: none;">
-        <div id="messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc;"></div>
-        <form id="message-form">
-            <input type="text" id="message-input" placeholder="Votre message..." required>
-            <button type="submit">Envoyer</button>
-        </form>
+    
+    <div id="user-info" style="display: none;">
+        <span>Connecté en tant que : <strong id="display-username"></strong></span>
+        <button id="btn-logout">Quitter</button>
     </div>
-
-    <script type="module" src="app.js"></script>
-</body>
-</html>
+</div>
