@@ -1,16 +1,40 @@
-<div id="auth-container">
-    <div id="login-form">
-        <h3>Wave Chat</h3>
-        <input type="text" id="username" placeholder="Ton pseudo (ex: Jean83)">
-        <input type="password" id="password" placeholder="Mot de passe (6 car. min)">
-        <div class="btns">
-            <button id="btn-login">Se connecter</button>
-            <button id="btn-signup">Créer un compte</button>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="auth-container">
+        <div id="auth-form">
+            <h2 id="form-title">Créer un compte</h2>
+            <input type="text" id="pseudo" placeholder="Ton Pseudo (ex: Flo_99)">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Mot de passe (6+ car.)">
+            
+            <div class="button-group">
+                <button id="btn-signup">S'inscrire</button>
+                <button id="btn-login">Déjà un compte ? Se connecter</button>
+            </div>
+        </div>
+
+        <div id="user-info" style="display: none;">
+            <span>Bienvenue, <strong id="current-pseudo"></strong> !</span>
+            <button id="btn-logout">Déconnexion</button>
         </div>
     </div>
-    
-    <div id="user-info" style="display: none;">
-        <span>Connecté en tant que : <strong id="display-username"></strong></span>
-        <button id="btn-logout">Quitter</button>
+
+    <div id="chat-app" style="display: none;">
+        <div id="messages"></div>
+        <form id="message-form">
+            <input type="text" id="message-input" placeholder="Écrire un message..." required>
+            <button type="submit">Envoyer</button>
+        </form>
     </div>
-</div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
