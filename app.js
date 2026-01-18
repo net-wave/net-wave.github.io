@@ -78,10 +78,10 @@ function loadMessages() {
         messagesDiv.innerHTML = '';
         snapshot.forEach(child => {
             const msg = child.val();
-            const p = document.createElement('div');
-            // On affiche le pseudo stocké dans le message
-            p.innerHTML = `<strong style="color: #2196F3;">${msg.user}</strong> : ${msg.text}`;
-            messagesDiv.appendChild(p);
+            const div = document.createElement('div');
+            div.className = "msg-container"; // Utilise la classe CSS
+            div.innerHTML = `<strong>${msg.user}</strong><span>${msg.text}</span>`;
+            messagesDiv.appendChild(div);
         });
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
