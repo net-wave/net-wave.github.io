@@ -18,7 +18,6 @@ const db = getDatabase(app);
 
 // --- AUTHENTIFICATION ---
 
-// Inscription
 document.getElementById('btn-signup').onclick = async () => {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
@@ -28,23 +27,23 @@ document.getElementById('btn-signup').onclick = async () => {
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+        // On enregistre le pseudo dans le profil Firebase
         await updateProfile(userCredential.user, { displayName: pseudo });
+        // Recharger la page ou forcer la mise à jour pour être sûr que le pseudo est pris en compte
+        window.location.reload(); 
     } catch (error) {
         alert("Erreur : " + error.message);
     }
 };
 
-// Connexion
 document.getElementById('btn-login').onclick = () => {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
-    signInWithEmailAndPassword(auth, email, pass).catch(err => alert("Email ou MDP incorrect"));
+    signInWithEmailAndPassword(auth, email, pass).catch(err => alert("Erreur de connexion"));
 };
 
-// Déconnexion
 document.getElementById('btn-logout').onclick = () => signOut(auth);
 
-// Surveillance de l'état (La partie qui posait problème)
 onAuthStateChanged(auth, (user) => {
     const authForm = document.getElementById('auth-form');
     const userInfo = document.getElementById('user-info');
@@ -55,7 +54,9 @@ onAuthStateChanged(auth, (user) => {
         if (authForm) authForm.style.display = 'none';
         if (userInfo) userInfo.style.display = 'block';
         if (chatApp) chatApp.style.display = 'block';
-        if (currentPseudoSpan) currentPseudoSpan.innerText = user.displayName || user.email;
+        
+        // On affiche UNIQUEMENT le displayName
+        currentPseudoSpan.innerText = user.displayName || "Utilisateur...";
         loadMessages();
     } else {
         if (authForm) authForm.style.display = 'block';
@@ -78,8 +79,8 @@ function loadMessages() {
         snapshot.forEach(child => {
             const msg = child.val();
             const p = document.createElement('div');
-            p.style.padding = "5px 0";
-            p.innerHTML = `<strong>${msg.user}</strong> : ${msg.text}`;
+            // On affiche le pseudo stocké dans le message
+            p.innerHTML = `<strong style="color: #2196F3;">${msg.user}</strong> : ${msg.text}`;
             messagesDiv.appendChild(p);
         });
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -89,9 +90,11 @@ function loadMessages() {
 document.getElementById('message-form').onsubmit = (e) => {
     e.preventDefault();
     const input = document.getElementById('message-input');
+    
     if (auth.currentUser && input.value.trim() !== "") {
+        // On envoie le displayName dans la base de données
         push(ref(db, 'messages'), {
-            user: auth.currentUser.displayName || auth.currentUser.email,
+            user: auth.currentUser.displayName || "Anonyme",
             text: input.value,
             timestamp: Date.now()
         });
