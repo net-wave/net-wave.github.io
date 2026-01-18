@@ -32,9 +32,15 @@ onValue(messagesRef, (snapshot) => {
     const data = snapshot.val();
     const messagesDiv = document.getElementById('messages');
     messagesDiv.innerHTML = '';
-    for (let id in data) {
-        const p = document.createElement('p');
-        p.innerHTML = `<strong>${data[id].user} :</strong> ${data[id].text}`;
-        messagesDiv.appendChild(p);
+    
+    if (data) { // Vérifie si on a des données
+        for (let id in data) {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${data[id].user} :</strong> ${data[id].text}`;
+            messagesDiv.appendChild(p);
+        }
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    } else {
+        messagesDiv.innerHTML = '<p>Aucun message pour le moment.</p>';
     }
 });
