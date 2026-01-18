@@ -18,19 +18,17 @@ const db = getDatabase(app);
 
 // --- AUTHENTIFICATION ---
 
-// Inscription avec Pseudo
+// Inscription
 document.getElementById('btn-signup').onclick = async () => {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
     const pseudo = document.getElementById('pseudo').value;
 
-    if (!pseudo) return alert("Choisis un pseudo !");
+    if (!pseudo) return alert("Indique un pseudo !");
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-        // Mise à jour du pseudo dans le profil Firebase
         await updateProfile(userCredential.user, { displayName: pseudo });
-        alert("Compte créé avec succès !");
     } catch (error) {
         alert("Erreur : " + error.message);
     }
@@ -40,28 +38,29 @@ document.getElementById('btn-signup').onclick = async () => {
 document.getElementById('btn-login').onclick = () => {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
-    signInWithEmailAndPassword(auth, email, pass).catch(err => alert("Erreur : " + err.message));
+    signInWithEmailAndPassword(auth, email, pass).catch(err => alert("Email ou MDP incorrect"));
 };
 
 // Déconnexion
 document.getElementById('btn-logout').onclick = () => signOut(auth);
 
-// Surveiller l'état de connexion
+// Surveillance de l'état (La partie qui posait problème)
 onAuthStateChanged(auth, (user) => {
     const authForm = document.getElementById('auth-form');
     const userInfo = document.getElementById('user-info');
     const chatApp = document.getElementById('chat-app');
+    const currentPseudoSpan = document.getElementById('current-pseudo');
 
     if (user) {
-        authForm.style.display = 'none';
-        userInfo.style.display = 'block';
-        chatApp.style.display = 'block';
-        document.getElementById('current-pseudo').innerText = user.displayName || "Anonyme";
+        if (authForm) authForm.style.display = 'none';
+        if (userInfo) userInfo.style.display = 'block';
+        if (chatApp) chatApp.style.display = 'block';
+        if (currentPseudoSpan) currentPseudoSpan.innerText = user.displayName || user.email;
         loadMessages();
     } else {
-        authForm.style.display = 'block';
-        userInfo.style.display = 'none';
-        chatApp.style.display = 'none';
+        if (authForm) authForm.style.display = 'block';
+        if (userInfo) userInfo.style.display = 'none';
+        if (chatApp) chatApp.style.display = 'none';
     }
 });
 
@@ -73,10 +72,13 @@ function loadMessages() {
 
     onValue(q, (snapshot) => {
         const messagesDiv = document.getElementById('messages');
+        if (!messagesDiv) return;
+        
         messagesDiv.innerHTML = '';
         snapshot.forEach(child => {
             const msg = child.val();
             const p = document.createElement('div');
+            p.style.padding = "5px 0";
             p.innerHTML = `<strong>${msg.user}</strong> : ${msg.text}`;
             messagesDiv.appendChild(p);
         });
@@ -89,7 +91,7 @@ document.getElementById('message-form').onsubmit = (e) => {
     const input = document.getElementById('message-input');
     if (auth.currentUser && input.value.trim() !== "") {
         push(ref(db, 'messages'), {
-            user: auth.currentUser.displayName,
+            user: auth.currentUser.displayName || auth.currentUser.email,
             text: input.value,
             timestamp: Date.now()
         });
