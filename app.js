@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = { 
   apiKey: "AIzaSyArmsKWg0D_375M5TZFsNw4ckamVsWZcoo",
@@ -9,94 +9,71 @@ const firebaseConfig = {
   projectId: "wave-1b878",
   storageBucket: "wave-1b878.firebasestorage.app",
   messagingSenderId: "737324012239",
-  appId: "1:737324012239:web:ceb581d9f134b98690ddba",
-  measurementId: "G-JSZ3VJKKDJ"
+  appId: "1:737324012239:web:ceb581d9f134b98690ddba"
 };
 
-// Initialisation
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+const db = getDatabase(app);
 
-// Éléments du DOM
-const loginBtn = document.getElementById('login-btn');
-const logoutBtn = document.getElementById('logout-btn');
-const chatContainer = document.getElementById('chat-container');
-const userInfo = document.getElementById('user-info');
-const messagesDiv = document.getElementById('messages');
-const messageForm = document.getElementById('message-form');
+// Éléments
+const emailInput = document.getElementById('email');
+const passInput = document.getElementById('password');
+const chatApp = document.getElementById('chat-app');
+const loginForm = document.getElementById('login-form');
 
-// --- GESTION DE L'AUTHENTIFICATION ---
+// --- AUTHENTIFICATION ---
 
+// Inscription
+document.getElementById('btn-signup').onclick = () => {
+    createUserWithEmailAndPassword(auth, emailInput.value, passInput.value)
+        .catch(error => alert("Erreur inscription : " + error.message));
+};
+
+// Connexion
+document.getElementById('btn-login').onclick = () => {
+    signInWithEmailAndPassword(auth, emailInput.value, passInput.value)
+        .catch(error => alert("Erreur connexion : " + error.message));
+};
+
+// Déconnexion
+document.getElementById('btn-logout').onclick = () => signOut(auth);
+
+// Surveiller l'état (Connecté ou non)
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        console.log("Utilisateur connecté:", user.displayName);
-        loginBtn.style.display = 'none';
-        userInfo.style.display = 'block';
-        chatContainer.style.display = 'flex'; // ou block selon ton CSS
-        document.getElementById('user-name').innerText = user.displayName;
-        document.getElementById('user-pic').src = user.photoURL;
+        loginForm.style.display = 'none';
+        chatApp.style.display = 'block';
+        document.getElementById('user-info').style.display = 'block';
+        document.getElementById('display-email').innerText = user.email;
         loadMessages();
     } else {
-        console.log("Utilisateur déconnecté");
-        loginBtn.style.display = 'block';
-        userInfo.style.display = 'none';
-        chatContainer.style.display = 'none';
-        messagesDiv.innerHTML = '';
+        loginForm.style.display = 'block';
+        chatApp.style.display = 'none';
+        document.getElementById('user-info').style.display = 'none';
     }
 });
 
-loginBtn.addEventListener('click', () => {
-    alert("Le bouton fonctionne, lancement de Google...");
-    signInWithPopup(auth, provider)
-        .then(() => alert("Succès !"))
-        .catch(err => alert("Erreur Firebase : " + err.message));
-});
-
-logoutBtn.addEventListener('click', () => {
-    signOut(auth).catch(err => console.error("Erreur Logout:", err));
-});
-
-
-// --- GESTION DES MESSAGES ---
+// --- CHAT ---
 
 function loadMessages() {
-    const messagesRef = ref(db, 'messages');
-    // On limite l'affichage aux 50 derniers messages
-    const recentMessagesQuery = query(messagesRef, limitToLast(50));
-
-    onValue(recentMessagesQuery, (snapshot) => {
+    onValue(ref(db, 'messages'), (snapshot) => {
+        const messagesDiv = document.getElementById('messages');
         messagesDiv.innerHTML = '';
-        const data = snapshot.val();
-        if (data) {
-            Object.values(data).forEach(msg => {
-                const div = document.createElement('div');
-                div.classList.add('message-item');
-                div.innerHTML = `
-                    <img src="${msg.photo}" style="width:25px; border-radius:50%; margin-right:5px;">
-                    <strong>${msg.user}:</strong> ${msg.text}
-                `;
-                messagesDiv.appendChild(div);
-            });
-            // Scroll automatique vers le bas
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
+        snapshot.forEach(child => {
+            const msg = child.val();
+            messagesDiv.innerHTML += `<p><strong>${msg.user}</strong>: ${msg.text}</p>`;
+        });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
 }
 
-messageForm.addEventListener('submit', (e) => {
+document.getElementById('message-form').onsubmit = (e) => {
     e.preventDefault();
     const input = document.getElementById('message-input');
-    const user = auth.currentUser;
-
-    if (user && input.value.trim() !== "") {
-        push(ref(db, 'messages'), {
-            user: user.displayName,
-            photo: user.photoURL,
-            text: input.value,
-            timestamp: Date.now()
-        });
-        input.value = '';
-    }
-});
+    push(ref(db, 'messages'), {
+        user: auth.currentUser.email,
+        text: input.value
+    });
+    input.value = '';
+};
