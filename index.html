@@ -3,49 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Net-Wave | Community</title>
+    <title>Net-Wave</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">🌊 NET-WAVE</a>
-            <div id="userStatus" class="d-flex align-items-center">
-                </div>
-        </div>
-    </nav>
-
-    <div class="container mt-5">
-        <div id="authSection" class="glass-card mx-auto">
-            <h2 id="authTitle" class="text-center mb-4">Content de vous revoir</h2>
-            <div class="form-group">
-                <input type="text" id="username" class="custom-input d-none" placeholder="Votre pseudo unique">
-                <input type="email" id="email" class="custom-input" placeholder="Email">
-                <input type="password" id="password" class="custom-input" placeholder="Mot de passe">
+    <div id="authSection" class="auth-container">
+        <div class="auth-card">
+            <div class="logo">🌊</div>
+            <h2 id="authTitle">Bienvenue sur Net-Wave</h2>
+            <div class="inputs">
+                <input type="text" id="username" class="msg-input d-none" placeholder="Choisissez un pseudo">
+                <input type="email" id="email" class="msg-input" placeholder="Adresse email">
+                <input type="password" id="password" class="msg-input" placeholder="Mot de passe">
             </div>
-            <button id="btnLogin" class="btn-main mt-3">Se connecter</button>
-            <button id="btnSignup" class="btn-main btn-alt mt-3 d-none">Créer mon compte</button>
-            
-            <p class="text-center mt-4">
-                <span id="toggleText">Nouveau ici ?</span> 
-                <button id="switchAuth" class="btn-link-custom">Rejoindre la vague</button>
+            <button id="btnLogin" class="btn-send">Se connecter</button>
+            <button id="btnSignup" class="btn-send d-none">Créer un compte</button>
+            <p class="toggle-auth">
+                <span id="toggleText">Nouveau ?</span> <a href="#" id="switchAuth">S'inscrire</a>
             </p>
         </div>
+    </div>
 
-        <div id="mainSection" class="d-none animate-in">
-            <div class="glass-card mb-5">
-                <textarea id="postContent" class="custom-input no-border" rows="3" placeholder="Partagez votre humeur..."></textarea>
-                <div class="text-end mt-2">
-                    <button id="btnPost" class="btn-main btn-small">Vaguer</button>
-                </div>
+    <div id="mainSection" class="messenger-wrapper d-none">
+        <header class="messenger-header">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">?</div>
+                <span id="currentUserName">Utilisateur</span>
             </div>
+            <button id="btnLogout" class="btn-logout">Déconnexion</button>
+        </header>
 
-            <div id="postsContainer">
+        <main id="chatWindow" class="chat-window">
+            <div id="postsContainer" class="messages-list">
                 </div>
-        </div>
+        </main>
+
+        <footer class="messenger-footer">
+            <div class="input-area">
+                <input type="text" id="postContent" placeholder="Écrivez un message..." autocomplete="off">
+                <button id="btnPost">Envoyer</button>
+            </div>
+        </footer>
     </div>
 
     <script type="module" src="app.js"></script>
