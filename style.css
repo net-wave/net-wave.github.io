@@ -108,13 +108,21 @@ button:hover {
 
 /* Style des bulles de message */
 .msg-container {
+    display: flex;
+    flex-direction: column; /* Aligne le pseudo au-dessus du message */
     background: #f3f4f6;
     padding: 10px 15px;
     border-radius: 15px 15px 15px 0;
     max-width: 80%;
-    align-self: flex-start;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 5px;
 }
+
+.msg-container strong {
+    font-size: 0.8rem;
+    color: #6366f1;
+    margin-bottom: 2px;
+}
+
 
 .msg-container strong {
     display: block;
