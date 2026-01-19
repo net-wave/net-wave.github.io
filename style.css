@@ -80,34 +80,62 @@ button {
 
 .msg {
     max-width: 75%;
-    padding: 10px 15px;
-    border-radius: 18px;
-    font-size: 15px;
-    line-height: 1.4;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+:root {
+    --accent: #007AFF;
+    --bg: #F2F2F7;
+    --card: #FFFFFF;
+    --text: #1C1C1E;
 }
 
-.msg.received {
-    background: #E9E9EB;
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
+body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--text);
+    height: 100vh; display: flex; justify-content: center;
 }
 
-.msg.sent {
-    background: var(--primary);
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
+.app-container {
+    width: 100%; max-width: 450px; background: var(--card);
+    height: 100vh; position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
 }
 
-.msg .author { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.7; }
+.view { width: 100%; height: 100%; display: flex; flex-direction: column; }
 
-/* Barre d'envoi (Sans bouton) */
-.input-area {
-    padding: 10px;
-    border-top: 1px solid #E5E5EA;
+/* Auth Card */
+.auth-card { padding: 40px 20px; text-align: center; }
+.auth-card h1 { font-size: 48px; font-weight: 800; letter-spacing: -2px; margin: 0; color: var(--accent); }
+.input-stack { margin: 30px 0; display: flex; flex-direction: column; gap: 10px; }
+
+input {
+    padding: 16px; border: none; background: #E9E9EB;
+    border-radius: 12px; font-size: 16px; outline: none;
 }
 
-#message-input { width: 100%; box-sizing: border-box; border-radius: 20px; background: #F2F2F7; border: none; }
+button {
+    padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.primary-btn { background: var(--accent); color: white; margin-bottom: 10px; }
+.secondary-btn { background: transparent; color: var(--accent); }
+
+/* Chat Header */
+header {
+    padding: 10px 15px; border-bottom: 1px solid #D1D1D6;
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+.header-user { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.header-user img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #ddd; }
+
+/* Bubbles */
+#messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+
+.m-item { max-width: 75%; padding: 10px 14px; border-radius: 20px; font-size: 15px; line-height: 1.4; }
+.m-item.sent { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
+.m-item.received { align-self: flex-start; background: #E9E9EB; color: black; border-bottom-left-radius: 4px; }
+.m-item .u { font-size: 10px; font-weight: bold; display: block; margin-bottom: 2px; opacity: 0.7; }
+
+.input-area { padding: 15px; border-top: 1px solid #D1D1D6; }
+#message-input { width: 100%; box-sizing: border-box; }
+
