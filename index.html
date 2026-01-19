@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Wave Chat</title>
@@ -8,34 +11,58 @@
 </head>
 <body>
 
-    <div id="main-container">
-        <div id="auth-section">
-            <div id="auth-form">
-                <h2>Wave Chat</h2>
-                <div class="input-group">
-                    <input type="text" id="pseudo" placeholder="Pseudo">
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wave - Chat</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
     <div class="app-container">
-        <header>
-            <strong>Wave</strong>
-            <a href="profile.html" class="profile-link">
-                <img id="nav-avatar" src="https://via.placeholder.com/35" alt="Profil">
-            </a>
-        </header>
-        <div id="messages"></div>
-        <div class="input-area">
-            <input type="text" id="message-input" placeholder="Message et Entrée pour envoyer">
+        <div id="view-login" class="view">
+            <div class="auth-card">
+                <h1>Wave</h1>
+                <p>Connectez-vous pour discuter</p>
+                <div class="input-stack">
+                    <input type="text" id="pseudo" placeholder="Pseudo (pour inscription)">
+                    <input type="email" id="email" placeholder="Email">
+                    <input type="password" id="password" placeholder="Mot de passe">
+                </div>
+                <button id="btn-login" class="primary-btn">Se connecter</button>
+                <button id="btn-signup" class="secondary-btn">Créer un compte</button>
+            </div>
+        </div>
+
+        <div id="view-chat" class="view" style="display: none;">
+            <header>
+                <div class="header-user" id="go-to-profile">
+                    <img id="nav-avatar" src="https://via.placeholder.com/40" alt="">
+                    <span id="nav-name">Chargement...</span>
+                </div>
+                <button id="btn-logout-head">Quitter</button>
+            </header>
+            <div id="messages"></div>
+            <div class="input-area">
+                <input type="text" id="message-input" placeholder="Message...">
+            </div>
+        </div>
+
+        <div id="view-profile" class="view" style="display: none;">
+            <header>
+                <button id="back-to-chat">← Chat</button>
+                <strong>Paramètres</strong>
+                <span></span>
+            </header>
+            <div class="profile-content">
+                <div class="pic-edit">
+                    <img id="profile-preview" src="https://via.placeholder.com/100">
+                    <input type="file" id="file-input" hidden accept="image/*">
+                    <button onclick="document.getElementById('file-input').click()">Changer la photo</button>
+                </div>
+                <input type="text" id="new-pseudo" placeholder="Nouveau pseudo">
+                <button id="btn-save" class="primary-btn">Enregistrer</button>
+            </div>
         </div>
     </div>
+
     <script type="module" src="app.js"></script>
+</body>
+</html>
+
+="app.js"></script>
 </body>
 </html>
 
