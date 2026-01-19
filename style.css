@@ -1,0 +1,117 @@
+/* --- Variables de couleurs --- */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --bg-light: #f0f2f5;
+    --white: #ffffff;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: var(--bg-light) !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Navigation --- */
+.navbar {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    box-shadow: var(--shadow);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+}
+
+/* --- Cartes d'Authentification --- */
+#authSection {
+    border: none;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    border-color: var(--primary-color);
+}
+
+/* --- Flux de Posts --- */
+#postsContainer {
+    max-width: 650px;
+    margin: 20px auto;
+}
+
+.post-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: none;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.post-author {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.post-time {
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+}
+
+.post-content {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* --- Zone de publication --- */
+#mainSection .card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: var(--shadow);
+}
+
+#postContent {
+    border: none;
+    background: #f8f9fa;
+    resize: none;
+}
+
+#postContent:focus {
+    background: #fff;
+}
+
+/* --- Boutons --- */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 10px 20px;
+}
+
+.btn-primary {
+    background-color: var(--
+primary-color);
+}
