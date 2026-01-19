@@ -75,14 +75,29 @@ function loadMessages() {
         const messagesDiv = document.getElementById('messages');
         if (!messagesDiv) return;
         
-        messagesDiv.innerHTML = '';
+        messagesDiv.innerHTML = ''; // On vide la zone
+        
         snapshot.forEach(child => {
             const msg = child.val();
+            
+            // Création de la bulle de message
             const div = document.createElement('div');
-            div.className = "msg-container"; // Utilise la classe CSS
-            div.innerHTML = `<strong>${msg.user}</strong><span>${msg.text}</span>`;
+            div.className = "msg-container";
+
+            // Création de l'élément pour le Pseudo (Sécurisé)
+            const nameElement = document.createElement('strong');
+            nameElement.textContent = msg.user; // Sécurise contre le XSS
+
+            // Création de l'élément pour le Texte (Sécurisé)
+            const textElement = document.createElement('span');
+            textElement.textContent = msg.text; // Sécurise contre le XSS
+
+            // Assemblage
+            div.appendChild(nameElement);
+            div.appendChild(textElement);
             messagesDiv.appendChild(div);
         });
+        
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
 }
