@@ -84,35 +84,68 @@ function loadMessages() {
             const div = document.createElement('div');
             div.className = "msg-container";
 
-            // Création de l'élément pour le Pseudo (Sécurisé)
-            const nameElement = document.createElement('strong');
-            nameElement.textContent = msg.user; // Sécurise contre le XSS
+// ... (garder le début identique : imports et config) ...
 
-            // Création de l'élément pour le Texte (Sécurisé)
-            const textElement = document.createElement('span');
-            textElement.textContent = msg.text; // Sécurise contre le XSS
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        document.getElementById('auth-form').style.display = 'none';
+        document.getElementById('user-info').style.display = 'flex';
+        document.getElementById('chat-app').style.display = 'flex';
+        document.getElementById('current-pseudo').innerText = user.displayName || "Utilisateur";
+        
+        // Mise à jour de la petite photo dans la barre de navigation
+        if(user.photoURL) document.getElementById('nav-profile-pic').src = user.photoURL;
+        
+        loadMessages();
+    } else {
+        document.getElementById('auth-form').style.display = 'block';
+        document.getElementById('user-info').style.display = 'none';
+        document.getElementById('chat-app').style.display = 'none';
+    }
+});
 
-            // Assemblage
-            div.appendChild(nameElement);
-            div.appendChild(textElement);
+function loadMessages() {
+    const messagesRef = ref(db, 'messages');
+    const q = query(messagesRef, limitToLast(50));
+
+    onValue(q, (snapshot) => {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML = '';
+        
+        snapshot.forEach(child => {
+            const msg = child.val();
+            const div = document.createElement('div');
+            // Si c'est notre message, on ajoute une classe "mine" pour le mettre à droite
+            const isMine = msg.uid === auth.currentUser?.uid;
+            div.className = isMine ? "msg-container mine" : "msg-container";
+
+            div.innerHTML = `
+                <img src="${msg.photo || 'https://via.placeholder.com/30'}" class="msg-avatar">
+                <div class="msg-content">
+                    <strong>${msg.user}</strong>
+                    <span>${msg.text}</span>
+                </div>
+            `;
             messagesDiv.appendChild(div);
         });
-        
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
 }
 
+// Lors de l'envoi, on ajoute l'UID et la PHOTO
 document.getElementById('message-form').onsubmit = (e) => {
     e.preventDefault();
     const input = document.getElementById('message-input');
-    
-    if (auth.currentUser && input.value.trim() !== "") {
-        // On envoie le displayName dans la base de données
+    const user = auth.currentUser;
+    if (user && input.value.trim() !== "") {
         push(ref(db, 'messages'), {
-            user: auth.currentUser.displayName || "Anonyme",
+            uid: user.uid,
+            user: user.displayName || "Anonyme",
+            photo: user.photoURL || "",
             text: input.value,
             timestamp: Date.now()
         });
         input.value = '';
     }
 };
+
