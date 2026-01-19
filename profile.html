@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="main-container">
+        <div id="profile-card">
+            <a href="index.html" class="back-link">← Retour au chat</a>
+            <h2>Mon Profil</h2>
+            
+            <div class="profile-pic-container">
+                <img id="profile-img-preview" src="https://via.placeholder.com/150" alt="Photo de profil">
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+                <button id="btn-change-pic" onclick="document.getElementById('file-input').click()">Changer la photo</button>
+            </div>
+
+            <div class="info-group">
+                <label>Email (non modifiable)</label>
+                <input type="text" id="profile-email" disabled>
+            </div>
+
+            <div class="info-group">
+                <label>Nom d'affichage</label>
+                <input type="text" id="profile-pseudo" placeholder="Ton nouveau pseudo">
+            </div>
+
+            <button id="btn-save-profile">Enregistrer les modifications</button>
+            <p id="status-msg"></p>
+        </div>
+    </div>
+
+    <script type="module" src="profile.js"></script>
+</body>
+    
+</html>
