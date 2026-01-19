@@ -125,6 +125,93 @@ onValue(ref(db, 'messages'), (snap) => {
                     <span class="msg-author">${isMe ? 'Moi' : msg.author}</span>
                     <div class="bubble">${msg.text}</div>
                 </div>`;
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyArmsKWg0D_375M5TZFsNw4ckamVsWZcoo",
+  authDomain: "wave-1b878.firebaseapp.com",
+  databaseURL: "https://wave-1b878-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "wave-1b878",
+  storageBucket: "wave-1b878.firebasestorage.app",
+  messagingSenderId: "737324012239",
+  appId: "1:737324012239:web:3f15dacc58598f2390ddba"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// Switch Login/Signup
+const switchAuth = document.getElementById('switchAuth');
+let isLogin = true;
+
+switchAuth.onclick = (e) => {
+    e.preventDefault();
+    isLogin = !isLogin;
+    document.getElementById('username').classList.toggle('d-none', isLogin);
+    document.getElementById('btnLogin').classList.toggle('d-none', !isLogin);
+    document.getElementById('btnSignup').classList.toggle('d-none', isLogin);
+    document.getElementById('authTitle').innerText = isLogin ? "Bienvenue sur Net-Wave" : "Créer un compte";
+};
+
+// Inscription & Connexion (simples)
+document.getElementById('btnSignup').onclick = async () => {
+    const user = await createUserWithEmailAndPassword(auth, email.value, password.value);
+    await updateProfile(user.user, { displayName: username.value });
+    location.reload();
+};
+document.getElementById('btnLogin').onclick = () => signInWithEmailAndPassword(auth, email.value, password.value);
+document.getElementById('btnLogout').onclick = () => signOut(auth);
+
+// Envoi de message
+document.getElementById('btnPost').onclick = sendMessage;
+document.getElementById('postContent').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+
+function sendMessage() {
+    const text = document.getElementById('postContent').value;
+    if(text.trim()) {
+        push(ref(db, 'messages'), {
+            text: text,
+            author: auth.currentUser.displayName,
+            uid: auth.currentUser.uid,
+            time: serverTimestamp()
+        });
+        document.getElementById('postContent').value = "";
+    }
+}
+
+// Interface Temps Réel
+onAuthStateChanged(auth, (user) => {
+    document.getElementById('authSection').classList.toggle('d-none', user);
+    document.getElementById('mainSection').classList.toggle('d-none', !user);
+    if(user) {
+        document.getElementById('currentUserName').innerText = user.displayName;
+        document.getElementById('userAvatar').innerText = user.displayName.charAt(0).toUpperCase();
+    }
+});
+
+// Affichage des bulles
+onValue(ref(db, 'messages'), (snap) => {
+    const container = document.getElementById('postsContainer');
+    container.innerHTML = "";
+    const data = snap.val();
+    if(data) {
+        Object.values(data).forEach(msg => {
+            const isMe = msg.uid === auth.currentUser?.uid;
+            container.innerHTML += `
+                <div class="msg-wrapper ${isMe ? 'msg-me' : 'msg-other'}">
+                    <span class="msg-author">${isMe ? 'Moi' : msg.author}</span>
+                    <div class="bubble">${msg.text}</div>
+                </div>`;
+        });
+        // Scroll en bas automatique
+        const win = document.getElementById('chatWindow');
+        win.scrollTop = win.scrollHeight;
+    }
+});
+
         });
         // Scroll en bas automatique
         const win = document.getElementById('chatWindow');
@@ -170,35 +257,3 @@ switchBtn.onclick = () => {
 // Inscription
 document.getElementById('btnSignup').onclick = async () => {
     const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    const name = document.getElementById('username').value;
-    try {
-        const res = await createUserWithEmailAndPassword(auth, email, pass);
-        await updateProfile(res.user, { displayName: name });
-        location.reload();
-    } catch (e) { alert(e.message); }
-};
-
-// Connexion
-document.getElementById('btnLogin').onclick = () => {
-    signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
-    .catch(e => alert("Erreur : " + e.message));
-};
-
-// Publier
-document.getElementById('btnPost').onclick = () => {
-    const content = document.getElementById('postContent').value;
-    if (content.trim()) {
-        push(ref(db, 'posts'), {
-            text: content,
-            author: auth.currentUser.displayName,
-            date: serverTimestamp()
-        });
-        document.getElementById('postContent').value = "";
-    }
-};
-
-// Observer l'état
-onAuthStateChanged(auth, (user) => {
-    const authSec = document.getElementById('authSection');
-    const mainSec = document.getElementById('mainSection');
