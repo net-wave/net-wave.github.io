@@ -2,256 +2,38 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wave Chat</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Réseau Social</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
 
-    <div class="app-container">
-        <div id="view-login" class="view">
-            <div class="auth-card">
-                <h1>Wave</h1>
-                <p>Connectez-vous pour discuter</p>
-                <div class="input-stack">
-                    <input type="text" id="pseudo" placeholder="Pseudo (pour inscription)">
-                    <input type="email" id="email" placeholder="Email">
-                    <input type="password" id="password" placeholder="Mot de passe">
-                </div>
-                <button id="btn-login" class="primary-btn">Se connecter</button>
-                <button id="btn-signup" class="secondary-btn">Créer un compte</button>
-            </div>
+    <nav class="navbar navbar-dark bg-primary mb-4">
+        <div class="container">
+            <span class="navbar-brand">MiniSocial</span>
+            <button id="btnLogout" class="btn btn-outline-light d-none">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="authSection" class="card p-4 mx-auto" style="max-width: 400px;">
+            <h3>Connexion</h3>
+            <input type="email" id="email" class="form-control mb-2" placeholder="Email">
+            <input type="password" id="password" class="form-control mb-2" placeholder="Mot de passe">
+            <button id="btnLogin" class="btn btn-primary w-100 mb-2">Se connecter</button>
+            <button id="btnSignup" class="btn btn-link w-100">Créer un compte</button>
         </div>
 
-        <div id="view-chat" class="view" style="display: none;">
-            <header>
-                <div class="header-user" id="go-to-profile">
-                    <img id="nav-avatar" src="https://via.placeholder.com/40" alt="">
-                    <span id="nav-name">Chargement...</span>
+        <div id="mainSection" class="d-none">
+            <div class="card p-3 mb-4">
+                <textarea id="postContent" class="form-control mb-2" placeholder="Quoi de neuf ?"></textarea>
+                <button id="btnPost" class="btn btn-success">Publier</button>
+            </div>
+            <div id="postsContainer">
                 </div>
-                <button id="btn-logout-head">Quitter</button>
-            </header>
-            <div id="messages"></div>
-            <div class="input-area">
-                <input type="text" id="message-input" placeholder="Message...">
-            </div>
-        </div>
-
-        <div id="view-profile" class="view" style="display: none;">
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wave Chat</title>
-    
-    <style>
-        :root {
-            --accent: #007AFF;
-            --bg: #F2F2F7;
-            --card: #FFFFFF;
-            --text: #1C1C1E;
-        }
-
-        body {
-            margin: 0; font-family: -apple-system, sans-serif;
-            background: var(--bg); color: var(--text);
-            height: 100vh; display: flex; justify-content: center;
-        }
-
-        .app-container {
-            width: 100%; max-width: 450px; background: var(--card);
-            height: 100vh; display: flex; flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-
-        .view { width: 100%; height: 100%; display: none; flex-direction: column; }
-        .active { display: flex; }
-
-        /* Auth */
-        .auth-card { padding: 40px 20px; text-align: center; }
-        .auth-card h1 { font-size: 40px; color: var(--accent); margin: 0; }
-        .input-stack { margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
-        input { padding: 14px; border: none; background: #E9E9EB; border-radius: 12px; font-size: 16px; }
-
-        button { padding: 14px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; }
-        .primary-btn { background: var(--accent); color: white; margin-bottom: 8px; width: 100%; }
-        .secondary-btn { background: transparent; color: var(--accent); width: 100%; }
-
-        /* Header */
-        header { padding: 10px 15px; border-bottom: 1px solid #D1D1D6; display: flex; justify-content: space-between; align-items: center; }
-        .header-user { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .header-user img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #ddd; }
-
-        /* Chat */
-        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-        .m-item { max-width: 75%; padding: 10px 14px; border-radius: 18px; font-size: 15px; }
-        .sent { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
-        .received { align-self: flex-start; background: #E9E9EB; border-bottom-left-radius: 4px; }
-        .u { font-size: 10px; font-weight: bold; display: block; margin-bottom: 2px; opacity: 0.7; }
-
-        .input-area { padding: 15px; border-top: 1px solid #D1D1D6; }
-        #message-input { width: 100%; box-sizing: border-box; }
-
-        /* Profile */
-        .profile-content { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        #profile-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
-    </style>
-</head>
-<body>
-
-    <div class="app-container">
-        <div id="view-login" class="view active">
-            <div class="auth-card">
-                <h1>Wave</h1>
-                <div class="input-stack">
-                    <input type="text" id="pseudo" placeholder="Pseudo (Inscription)">
-                    <input type="email" id="email" placeholder="Email">
-                    <input type="password" id="password" placeholder="Mot de passe">
-                </div>
-                <button id="btn-login" class="primary-btn">Se connecter</button>
-                <button id="btn-signup" class="secondary-btn">Créer un compte</button>
-            </div>
-        </div>
-
-        <div id="view-chat" class="view">
-            <header>
-                <div class="header-user" id="go-to-profile">
-                    <img id="nav-avatar" src="" alt="">
-                    <span id="nav-name">Chat</span>
-                </div>
-                <button id="btn-logout" style="background:none; color:red; font-size:12px;">Déconnexion</button>
-            </header>
-            <div id="messages"></div>
-            <div class="input-area">
-                <input type="text" id="message-input" placeholder="Message...">
-            </div>
-        </div>
-
-        <div id="view-profile" class="view">
-            <header>
-                <button id="back-to-chat" style="background:none; color:var(--accent);">← Retour</button>
-                <strong>Profil</strong>
-                <span></span>
-            </header>
-            <div class="profile-content">
-                <img id="profile-preview" src="">
-                <input type="file" id="file-input" hidden accept="image/*">
-                <button onclick="document.getElementById('file-input').click()" class="secondary-btn">Changer la photo</button>
-                <input type="text" id="new-pseudo" placeholder="Nouveau pseudo">
-                <button id="btn-save" class="primary-btn">Enregistrer</button>
-            </div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, push, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-        const firebaseConfig = { 
-            apiKey: "AIzaSyArmsKWg0D_375M5TZFsNw4ckamVsWZcoo",
-            authDomain: "wave-1b878.firebaseapp.com",
-            databaseURL: "https://wave-1b878-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "wave-1b878",
-            storageBucket: "wave-1b878.firebasestorage.app",
-            messagingSenderId: "737324012239",
-            appId: "1:737324012239:web:ceb581d9f134b98690ddba"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        const storage = getStorage(app);
-
-        const show = (id) => {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        };
-
-        // --- AUTH ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                show('view-chat');
-                document.getElementById('nav-name').innerText = user.displayName || "Moi";
-                if(user.photoURL) document.getElementById('nav-avatar').src = user.photoURL;
-                loadMessages();
-            } else {
-                show('view-login');
-            }
-        });
-
-        document.getElementById('btn-signup').onclick = async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            const pseudo = document.getElementById('pseudo').value;
-            try {
-                const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await updateProfile(res.user, { displayName: pseudo });
-                location.reload();
-            } catch (e) { alert(e.message); }
-        };
-
-        document.getElementById('btn-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
-                .catch(e => alert("Erreur : " + e.message));
-        };
-
-        document.getElementById('btn-logout').onclick = () => signOut(auth);
-
-        // --- CHAT ---
-        document.getElementById('message-input').onkeypress = (e) => {
-            if (e.key === 'Enter' && e.target.value.trim() !== "") {
-                push(ref(db, 'messages'), {
-                    uid: auth.currentUser.uid,
-                    user: auth.currentUser.displayName || "Anonyme",
-                    text: e.target.value
-                });
-                e.target.value = "";
-            }
-        };
-
-        function loadMessages() {
-            onValue(query(ref(db, 'messages'), limitToLast(50)), (snap) => {
-                const box = document.getElementById('messages');
-                box.innerHTML = "";
-                snap.forEach(c => {
-                    const m = c.val();
-                    const isMe = m.uid === auth.currentUser.uid;
-                    const div = document.createElement('div');
-                    div.className = `m-item ${isMe ? 'sent' : 'received'}`;
-                    div.innerHTML = `<span class="u">${m.user}</span>${m.text}`;
-                    box.appendChild(div);
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-        }
-
-        // --- NAVIGATION & PROFIL ---
-        document.getElementById('go-to-profile').onclick = () => {
-            show('view-profile');
-            document.getElementById('new-pseudo').value = auth.currentUser.displayName || "";
-            if(auth.currentUser.photoURL) document.getElementById('profile-preview').src = auth.currentUser.photoURL;
-        };
-        document.getElementById('back-to-chat').onclick = () => show('view-chat');
-
-        document.getElementById('btn-save').onclick = async () => {
-            const file = document.getElementById('file-input').files[0];
-            let url = auth.currentUser.photoURL;
-            if(file) {
-                const s = sRef(storage, `pics/${auth.currentUser.uid}`);
-                await uploadBytes(s, file);
-                url = await getDownloadURL(s);
-            }
-            await updateProfile(auth.currentUser, { 
-                displayName: document.getElementById('new-pseudo').value, 
-                photoURL: url 
-            });
-            alert("Profil mis à jour !");
-            location.reload();
-        };
-    </script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
-
