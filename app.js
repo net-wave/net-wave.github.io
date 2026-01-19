@@ -9,8 +9,8 @@ const firebaseConfig = {
   projectId: "wave-1b878",
   storageBucket: "wave-1b878.firebasestorage.app",
   messagingSenderId: "737324012239",
-  appId: "1:737324012239:web:ceb581d9f134b98690ddba",
-  measurementId: "G-JSZ3VJKKDJ"
+  appId: "1:737324012239:web:3f15dacc58598f2390ddba",
+  measurementId: "G-W85TM9G8KS"
 };
 
 const app = initializeApp(firebaseConfig);
