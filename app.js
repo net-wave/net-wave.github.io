@@ -117,35 +117,119 @@ function loadMessages() {
             const div = document.createElement('div');
             // Si c'est notre message, on ajoute une classe "mine" pour le mettre à droite
             const isMine = msg.uid === auth.currentUser?.uid;
-            div.className = isMine ? "msg-container mine" : "msg-container";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, push, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-            div.innerHTML = `
-                <img src="${msg.photo || 'https://via.placeholder.com/30'}" class="msg-avatar">
-                <div class="msg-content">
-                    <strong>${msg.user}</strong>
-                    <span>${msg.text}</span>
-                </div>
-            `;
-            messagesDiv.appendChild(div);
+const firebaseConfig = { 
+    apiKey: "AIzaSyArmsKWg0D_375M5TZFsNw4ckamVsWZcoo",
+    authDomain: "wave-1b878.firebaseapp.com",
+    databaseURL: "https://wave-1b878-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "wave-1b878",
+    storageBucket: "wave-1b878.firebasestorage.app",
+    messagingSenderId: "737324012239",
+    appId: "1:737324012239:web:ceb581d9f134b98690ddba"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
+
+// --- REDIRECTION AUTOMATIQUE ---
+onAuthStateChanged(auth, (user) => {
+    const path = window.location.pathname;
+    if (!user && !path.includes("login.html")) {
+        window.location.href = "login.html";
+    } else if (user && path.includes("login.html")) {
+        window.location.href = "index.html";
+    }
+    
+    // Update nav avatar
+    const navAv = document.getElementById('nav-avatar');
+    if(user && navAv && user.photoURL) navAv.src = user.photoURL;
+});
+
+// --- PAGE LOGIN ---
+const btnSignup = document.getElementById('btn-signup');
+if(btnSignup) {
+    btnSignup.onclick = async () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('password').value;
+        const pseudo = document.getElementById('pseudo').value;
+        try {
+            const res = await createUserWithEmailAndPassword(auth, email, pass);
+            await updateProfile(res.user, { displayName: pseudo });
+            window.location.href = "index.html";
+        } catch (e) { alert(e.message); }
+    };
+    document.getElementById('btn-login').onclick = () => {
+        signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+        .catch(e => alert("Erreur de connexion"));
+    };
+}
+
+// --- PAGE CHAT (index.html) ---
+const msgInput = document.getElementById('message-input');
+if(msgInput) {
+    // Envoi sur touche ENTREE
+    msgInput.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter' && msgInput.value.trim() !== "") {
+            const user = auth.currentUser;
+            push(ref(db, 'messages'), {
+                uid: user.uid,
+                user: user.displayName || "Anonyme",
+                photo: user.photoURL || "",
+                text: msgInput.value
+            });
+            msgInput.value = "";
+        }
+    });
+
+    onValue(query(ref(db, 'messages'), limitToLast(50)), (snap) => {
+        const div = document.getElementById('messages');
+        div.innerHTML = "";
+        snap.forEach(child => {
+            const m = child.val();
+            const isMine = m.uid === auth.currentUser?.uid;
+            div.innerHTML += `
+                <div class="msg ${isMine ? 'sent' : 'received'}">
+                    <span class="author">${m.user}</span>
+                    ${m.text}
+                </div>`;
         });
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        div.scrollTop = div.scrollHeight;
     });
 }
 
-// Lors de l'envoi, on ajoute l'UID et la PHOTO
-document.getElementById('message-form').onsubmit = (e) => {
-    e.preventDefault();
-    const input = document.getElementById('message-input');
-    const user = auth.currentUser;
-    if (user && input.value.trim() !== "") {
-        push(ref(db, 'messages'), {
-            uid: user.uid,
-            user: user.displayName || "Anonyme",
-            photo: user.photoURL || "",
-            text: input.value,
-            timestamp: Date.now()
+// --- PAGE PROFIL ---
+const btnSave = document.getElementById('btn-save');
+if(btnSave) {
+    const fileIn = document.getElementById('file-input');
+    const preview = document.getElementById('profile-preview');
+    
+    // Preview image
+    fileIn.onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => preview.src = ev.target.result;
+        reader.readAsDataURL(e.target.files[0]);
+    };
+
+    btnSave.onclick = async () => {
+        const user = auth.currentUser;
+        let url = user.photoURL;
+        if(fileIn.files[0]) {
+            const s = sRef(storage, `pics/${user.uid}`);
+            await uploadBytes(s, fileIn.files[0]);
+            url = await getDownloadURL(s);
+        }
+        await updateProfile(user, { 
+            displayName: document.getElementById('new-pseudo').value || user.displayName,
+            photoURL: url
         });
-        input.value = '';
-    }
-};
+        alert("Profil mis à jour !");
+    };
+    document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => window.location.href = "login.html");
+}
 
