@@ -1,7 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// Ta configuration Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyArmsKWg0D_375M5TZFsNw4ckamVsWZcoo",
   authDomain: "wave-1b878.firebaseapp.com",
@@ -13,75 +14,70 @@ const firebaseConfig = {
   measurementId: "G-W85TM9G8KS"
 };
 
+// Initialisation
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
-// --- AUTHENTIFICATION ---
-const btnLogin = document.getElementById('btnLogin');
-const btnSignup = document.getElementById('btnSignup');
+// Éléments DOM
+const postInput = document.getElementById('post-input');
+const postBtn = document.getElementById('post-btn');
+const postsContainer = document.getElementById('posts-container');
+const authSection = document.getElementById('auth-status');
 
-btnSignup.onclick = () => {
-    createUserWithEmailAndPassword(auth, email.value, password.value).catch(alert);
-};
+// --- 1. PUBLIER UN MESSAGE ---
+postBtn.addEventListener('click', () => {
+    const user = auth.currentUser;
+    const text = postInput.value.trim();
 
-btnLogin.onclick = () => {
-    signInWithEmailAndPassword(auth, email.value, password.value).catch(alert);
-};
+    if (!user) {
+        alert("Tu dois être connecté pour publier !");
+        return;
+    }
 
-document.getElementById('btnLogout').onclick = () => signOut(auth);
-
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        document.getElementById('authSection').classList.add('d-none');
-        document.getElementById('mainSection').classList.remove('d-none');
-        document.getElementById('btnLogout').classList.remove('d-none');
-        chargerPosts();
-    } else {
-        document.getElementById('authSection').classList.remove('d-none');
-        document.getElementById('mainSection').classList.add('d-none');
-        document.getElementById('btnLogout').classList.add('d-none');
+    if (text !== "") {
+        const postsRef = ref(db, 'posts');
+        push(postsRef, {
+            username: user.displayName || "Anonyme",
+            content: text,
+            timestamp: serverTimestamp(),
+            uid: user.uid
+        });
+        postInput.value = ""; // Vide le champ après envoi
     }
 });
 
-// --- GESTION DES POSTS ---
-const btnPost = document.getElementById('btnPost');
-const postContent = document.getElementById('postContent');
-
-btnPost.onclick = () => {
-    if (postContent.value.trim() !== "") {
-        const postsRef = ref(db, 'posts');
-        push(postsRef, {
-            uid: auth.currentUser.uid,
-            email: auth.currentUser.email,
-            content: postContent.value,
-            timestamp: serverTimestamp()
-        });
-        postContent.value = "";
-    }
-};
-
-function chargerPosts() {
-    const postsRef = ref(db, 'posts');
-    onValue(postsRef, (snapshot) => {
-        const container = document.getElementById('postsContainer');
-        container.innerHTML = "";
-        const data = snapshot.val();
+// --- 2. LIRE LES MESSAGES EN TEMPS RÉEL ---
+const postsRef = ref(db, 'posts');
+onValue(postsRef, (snapshot) => {
+    postsContainer.innerHTML = ""; // On vide pour reconstruire proprement
+    const data = snapshot.val();
+    
+    if (data) {
+        // Transformer l'objet en tableau et trier par date (plus récent en haut)
+        const entries = Object.entries(data).reverse();
         
-        // Convertir en tableau et inverser pour avoir le plus récent en premier
-        if (data) {
-            Object.values(data).reverse().forEach(post => {
-                const card = `
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">${post.email}</h6>
-                            <p class="card-text">${post.content}</p>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += card;
-            });
-        }
+        entries.forEach(([key, post]) => {
+            const postElement = document.createElement('div');
+            postElement.classList.add('post-card');
+            postElement.innerHTML = `
+                <strong>${post.username}</strong>
+                <p>${post.content}</p>
+                <small>${post.timestamp ? new Date(post.timestamp).toLocaleString() : ''}</small>
+            `;
+            postsContainer.appendChild(postElement);
+        });
+    } else {
+        postsContainer.innerHTML = "<p>Aucun message pour le moment. Soyez le premier !</p>";
+    }
+});
 
-    });
-                   }
+// --- 3. GÉRER L'AFFICHAGE SELON LA CONNEXION ---
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        authSection.innerHTML = `Connecté en tant que : <b>${user.displayName}</b> <button id="logout-btn">Déconnexion</button>`;
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+    } else {
+        authSection.innerHTML = `<a href="login.html">Se connecter / S'inscrire</a>`;
+    }
+});
