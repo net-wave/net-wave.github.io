@@ -1,117 +1,98 @@
-/* --- Variables de couleurs --- */
 :root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --success-color: #28a745;
-    --bg-light: #f0f2f5;
-    --white: #ffffff;
-    --shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --glass: rgba(255, 255, 255, 0.95);
+    --accent: #764ba2;
+    --text: #2d3436;
 }
 
 body {
-    background-color: var(--bg-light) !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
 }
 
 /* --- Navigation --- */
 .navbar {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    box-shadow: var(--shadow);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.navbar-brand {
-    font-size: 1.5rem;
-    letter-spacing: 1px;
+.navbar-brand { color: white !important; font-size: 1.5rem; }
+
+/* --- Glassmorphism Card --- */
+.glass-card {
+    background: var(--glass);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    max-width: 500px;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: transform 0.3s ease;
 }
 
-/* --- Cartes d'Authentification --- */
-#authSection {
-    border: none;
-    border-radius: 15px;
+#mainSection .glass-card { max-width: 700px; margin: 0 auto 2rem; }
+
+/* --- Inputs --- */
+.custom-input {
+    width: 100%;
+    background: #f1f3f6;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    outline: none;
     transition: all 0.3s ease;
 }
 
-.form-control {
-    border-radius: 8px;
-    padding: 12px;
-    border: 1px solid #ddd;
-}
-
-.form-control:focus {
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-    border-color: var(--primary-color);
-}
-
-/* --- Flux de Posts --- */
-#postsContainer {
-    max-width: 650px;
-    margin: 20px auto;
-}
-
-.post-card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    border: none;
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.post-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.post-author {
-    font-weight: bold;
-    color: var(--primary-color);
-    font-size: 1.1rem;
-}
-
-.post-time {
-    font-size: 0.8rem;
-    color: var(--secondary-color);
-}
-
-.post-content {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #333;
-}
-
-/* --- Zone de publication --- */
-#mainSection .card {
-    border-radius: 15px;
-    border: none;
-    box-shadow: var(--shadow);
-}
-
-#postContent {
-    border: none;
-    background: #f8f9fa;
-    resize: none;
-}
-
-#postContent:focus {
-    background: #fff;
+.custom-input:focus {
+    border-color: var(--accent);
+    background: white;
+    box-shadow: 0 5px 15px rgba(118, 75, 162, 0.1);
 }
 
 /* --- Boutons --- */
-.btn {
-    border-radius: 8px;
+.btn-main {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
     font-weight: 600;
-    padding: 10px 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 15px rgba(118, 75, 162, 0.3);
 }
 
-.btn-primary {
-    background-color: var(--
-primary-color);
+.btn-main:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(118, 75, 162, 0.4);
 }
+
+.btn-link-custom {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* --- Posts Appearance --- */
+.post-item {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.post-user { font-weight: 600; color: var(--accent); margin-right: 10px; }
+.post-date { font-size: 0.75rem; color: #b2bec3; }
+.post-text { margin-top: 10px; font-size: 1.05rem; }
