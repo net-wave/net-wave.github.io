@@ -3,13 +3,14 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "TON_API_KEY",
-    authDomain: "TON_PROJET.firebaseapp.com",
-    databaseURL: "https://TON_PROJET-default-rtdb.firebaseio.com",
-    projectId: "TON_PROJET",
-    storageBucket: "TON_PROJET.appspot.com",
-    messagingSenderId: "...",
-    appId: "..."
+  apiKey: "AIzaSyArmsKWg0D_375M5TZFsNw4ckamVsWZcoo",
+  authDomain: "wave-1b878.firebaseapp.com",
+  databaseURL: "https://wave-1b878-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "wave-1b878",
+  storageBucket: "wave-1b878.firebasestorage.app",
+  messagingSenderId: "737324012239",
+  appId: "1:737324012239:web:ceb581d9f134b98690ddba",
+  measurementId: "G-JSZ3VJKKDJ"
 };
 
 const app = initializeApp(firebaseConfig);
