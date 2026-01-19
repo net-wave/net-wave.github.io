@@ -49,35 +49,101 @@ postBtn.addEventListener('click', () => {
 
 // --- 2. LIRE LES MESSAGES EN TEMPS RÉEL ---
 const postsRef = ref(db, 'posts');
-onValue(postsRef, (snapshot) => {
-    postsContainer.innerHTML = ""; // On vide pour reconstruire proprement
-    const data = snapshot.val();
-    
-    if (data) {
-        // Transformer l'objet en tableau et trier par date (plus récent en haut)
-        const entries = Object.entries(data).reverse();
-        
-        entries.forEach(([key, post]) => {
-            const postElement = document.createElement('div');
-            postElement.classList.add('post-card');
-            postElement.innerHTML = `
-                <strong>${post.username}</strong>
-                <p>${post.content}</p>
-                <small>${post.timestamp ? new Date(post.timestamp).toLocaleString() : ''}</small>
-            `;
-            postsContainer.appendChild(postElement);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyArmsKWg0D_375M5TZFsNw4ckamVsWZcoo",
+  authDomain: "wave-1b878.firebaseapp.com",
+  databaseURL: "https://wave-1b878-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "wave-1b878",
+  storageBucket: "wave-1b878.firebasestorage.app",
+  messagingSenderId: "737324012239",
+  appId: "1:737324012239:web:3f15dacc58598f2390ddba"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// Basculer Inscription / Connexion
+let isLoginMode = true;
+const switchBtn = document.getElementById('switchAuth');
+
+switchBtn.onclick = () => {
+    isLoginMode = !isLoginMode;
+    document.getElementById('authTitle').innerText = isLoginMode ? "Content de vous revoir" : "Rejoindre l'aventure";
+    document.getElementById('username').classList.toggle('d-none', isLoginMode);
+    document.getElementById('btnLogin').classList.toggle('d-none', !isLoginMode);
+    document.getElementById('btnSignup').classList.toggle('d-none', isLoginMode);
+    switchBtn.innerText = isLoginMode ? "Rejoindre la vague" : "Déjà membre ?";
+};
+
+// Inscription
+document.getElementById('btnSignup').onclick = async () => {
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('password').value;
+    const name = document.getElementById('username').value;
+    try {
+        const res = await createUserWithEmailAndPassword(auth, email, pass);
+        await updateProfile(res.user, { displayName: name });
+        location.reload();
+    } catch (e) { alert(e.message); }
+};
+
+// Connexion
+document.getElementById('btnLogin').onclick = () => {
+    signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+    .catch(e => alert("Erreur : " + e.message));
+};
+
+// Publier
+document.getElementById('btnPost').onclick = () => {
+    const content = document.getElementById('postContent').value;
+    if (content.trim()) {
+        push(ref(db, 'posts'), {
+            text: content,
+            author: auth.currentUser.displayName,
+            date: serverTimestamp()
         });
+        document.getElementById('postContent').value = "";
+    }
+};
+
+// Observer l'état
+onAuthStateChanged(auth, (user) => {
+    const authSec = document.getElementById('authSection');
+    const mainSec = document.getElementById('mainSection');
+    const userStatus = document.getElementById('userStatus');
+
+    if (user) {
+        authSec.classList.add('d-none');
+        mainSec.classList.remove('d-none');
+        userStatus.innerHTML = `<span class="text-white me-3">Salut, <b>${user.displayName}</b></span> 
+                                <button id="out" class="btn btn-sm btn-outline-light">Sortir</button>`;
+        document.getElementById('out').onclick = () => signOut(auth);
     } else {
-        postsContainer.innerHTML = "<p>Aucun message pour le moment. Soyez le premier !</p>";
+        authSec.classList.remove('d-none');
+        mainSec.classList.add('d-none');
+        userStatus.innerHTML = "";
     }
 });
 
-// --- 3. GÉRER L'AFFICHAGE SELON LA CONNEXION ---
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        authSection.innerHTML = `Connecté en tant que : <b>${user.displayName}</b> <button id="logout-btn">Déconnexion</button>`;
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-    } else {
-        authSection.innerHTML = `<a href="login.html">Se connecter / S'inscrire</a>`;
+// Charger les posts
+onValue(ref(db, 'posts'), (snap) => {
+    const container = document.getElementById('postsContainer');
+    container.innerHTML = "";
+    const data = snap.val();
+    if (data) {
+        Object.values(data).reverse().forEach(post => {
+            container.innerHTML += `
+                <div class="post-item shadow-sm">
+                    <span class="post-user">@${post.author}</span>
+                    <span class="post-date">${post.date ? new Date(post.date).toLocaleDateString() : 'À l\'instant'}</span>
+                    <div class="post-text">${post.text}</div>
+                </div>`;
+        });
     }
 });
+
