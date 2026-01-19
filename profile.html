@@ -3,37 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wave Chat</title>
+    <title>Wave - Profil</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="main-container">
-        <div id="profile-card">
-            <a href="index.html" class="back-link">← Retour au chat</a>
-            <h2>Mon Profil</h2>
+    <div class="app-container">
+        <header>
+            <a href="index.html" style="text-decoration:none">← Retour</a>
+            <strong>Profil</strong>
+            <span></span>
+        </header>
+        <div class="form-container">
+            <img id="profile-preview" src="https://via.placeholder.com/100" style="width:100px; height:100px; border-radius:50%; align-self:center; object-fit:cover;">
+            <input type="file" id="file-input" style="display:none" accept="image/*">
+            <button onclick="document.getElementById('file-input').click()" class="btn-alt">Changer la photo</button>
             
-            <div class="profile-pic-container">
-                <img id="profile-img-preview" src="https://via.placeholder.com/150" alt="Photo de profil">
-                <input type="file" id="file-input" accept="image/*" style="display: none;">
-                <button id="btn-change-pic" onclick="document.getElementById('file-input').click()">Changer la photo</button>
-            </div>
-
-            <div class="info-group">
-                <label>Email (non modifiable)</label>
-                <input type="text" id="profile-email" disabled>
-            </div>
-
-            <div class="info-group">
-                <label>Nom d'affichage</label>
-                <input type="text" id="profile-pseudo" placeholder="Ton nouveau pseudo">
-            </div>
-
-            <button id="btn-save-profile">Enregistrer les modifications</button>
-            <p id="status-msg"></p>
+            <input type="text" id="new-pseudo" placeholder="Nouveau pseudo">
+            <button id="btn-save">Enregistrer</button>
+            <button id="btn-logout" style="background:#FF3B30">Déconnexion</button>
         </div>
     </div>
-
-    <script type="module" src="profile.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
-    
 </html>
