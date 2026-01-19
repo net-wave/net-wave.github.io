@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Wave Chat</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,30 +11,43 @@
     <div id="main-container">
         <div id="auth-section">
             <div id="auth-form">
-                <h2>Rejoindre Wave Chat</h2>
-                <a href="wave_setup.apk" id="download-apk" class="apk-badge">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg" alt="Android">
-                    Télécharger l'APK
-                </a>
-                <input type="text" id="pseudo" placeholder="Ton Pseudo">
-                <input type="email" id="email" placeholder="Email">
-                <input type="password" id="password" placeholder="Mot de passe (6+ car.)">
+                <h2>Wave Chat</h2>
+                <div class="input-group">
+                    <input type="text" id="pseudo" placeholder="Pseudo">
+                    <input type="email" id="email" placeholder="Email">
+                    <input type="password" id="password" placeholder="Mot de passe">
+                </div>
                 <div class="btns">
                     <button id="btn-signup">S'inscrire</button>
-                    <button id="btn-login">Se connecter</button>
+                    <button id="btn-login">Connexion</button>
                 </div>
             </div>
 
             <div id="user-info" style="display: none;">
-                <span>Connecté : <strong id="current-pseudo"></strong></span>
-                <button id="btn-logout">Déconnexion</button>
+                <div class="user-header">
+                    <img id="nav-profile-pic" src="https://via.placeholder.com/40" alt="Profil">
+                    <span>Salut, <strong id="current-pseudo"></strong></span>
+                </div>
+                <div class="nav-btns">
+                    <a href="profile.html" class="btn-secondary">⚙️ Profil</a>
+                    <button id="btn-logout">Quitter</button>
+                </div>
             </div>
         </div>
 
         <div id="chat-app" style="display: none;">
-            <div id="messages" style="height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;"></div>
+            <div id="messages"></div>
             <form id="message-form">
-                <input type="text" id="message-input" placeholder="Ton message..." required>
+                <input type="text" id="message-input" placeholder="Message..." required>
+                <button type="submit" id="btn-send">➤</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
+               <input type="text" id="message-input" placeholder="Ton message..." required>
                 <button type="submit">Envoyer</button>
             </form>
         </div>
